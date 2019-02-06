@@ -1,0 +1,123 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "clean",
+            "type": "shell",
+
+            "linux": {
+                "command": "rm",
+                "args": [
+                    "-f",
+                    "${workspaceFolder}/tmp/${fileBasenameNoExtension}.out",
+                    "${workspaceFolder}/tmp/${fileBasenameNoExtension}.vcd"
+                ],
+            },
+            
+            "windows": {
+                "command": "del",
+                "args": [
+                    "-Recurse",
+                    "-ErrorAction",
+                    "SilentlyContinue,",
+                    "SilentlyContinue",
+                    "-Path",
+                    "${workspaceFolder}/tmp/${fileBasenameNoExtension}.out,",
+                    "${workspaceFolder}/tmp/${fileBasenameNoExtension}.vcd",
+                ],
+            },
+            
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "iverilog",
+            "args": [
+                "-g",
+                "2001",
+                
+                "-I",
+                "${workspaceFolder}",
+
+                "-s",
+                "${fileBasenameNoExtension}",
+
+                "-o",
+                "${workspaceFolder}/tmp/${fileBasenameNoExtension}.out",
+                "${file}",
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "generate",
+            "type": "shell",
+            "command": "vvp",
+            "args": [
+                "${workspaceFolder}/tmp/${fileBasenameNoExtension}.out"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "showaves",
+            "type": "shell",
+            "command": "gtkwave",
+            "args": [
+                "${workspaceFolder}/tmp/${fileBasenameNoExtension}.vcd"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        
+        {
+            "label": "show me the waves",
+            "dependsOn": [
+                "clean",
+                "build",
+                "generate",
+                "showaves",
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": true,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        }
+    ]
+}
